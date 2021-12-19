@@ -6,7 +6,6 @@ import co.usa.ciclo4.retos.icrudrepository.CloneCrudRepository;
 import co.usa.ciclo4.retos.dmodel.Clone;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 /**
  * @author IngSB
@@ -16,63 +15,58 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class CloneRepository {
+private CloneCrudRepository cloneCrudRepository;
     /**
-     * Atributo objeto 'cloneCrudRepository' instancia de la interface
-     * 'CloneCrudRepository'
+     * Metodo constructor
+     * @param cloneCrudRepository
      */
-    @Autowired
-    private CloneCrudRepository cloneCrudRepository;
-    /**
-     * Metodo para obtener y retornar una lista de todos los registros de
-     * documentos de productos hacia el metodo 'findAll' del 
-     * MongoRepository
-     * @return 
-     */
-    public List<Clone> getAll() {
-        return cloneCrudRepository.findAll();
+    public CloneRepository(CloneCrudRepository cloneCrudRepository) {
+        this.cloneCrudRepository = cloneCrudRepository;
     }
     /**
-     * Metodo para obtener y retornar un registro de documento de producto por
-     * el valor de su atributo 'id', hacia el metodo 'findById' del 
-     * MongoRepository
+     * metodo para obtener cada producto por Id
      * @param id
-     * @return 
+     * @return
      */
-    public Optional<Clone> getCloneById(Integer id) {
+    public Optional<Clone> getCloneById(int id){
         return cloneCrudRepository.findById(id);
     }
     /**
-     * Metodo para guardar y retornar un registro de documento de producto 
-     * hacia el metodo 'save' del MongoRepository
-     * @param clone
-     * @return 
+     * Metodo para obtener a todos los productos
+     * @return
      */
-    public Clone save(Clone clone) {
+    public List<Clone> getAll(){
+        return (List<Clone>) cloneCrudRepository.findAll();
+    }
+    /**
+     * Metodo para guardar cada producto
+     * @param clone
+     * @return
+     */
+    public Clone save(Clone clone){
         return cloneCrudRepository.save(clone);
     }
     /**
-     * Metodo para actualizar y retornar un registro de documento de producto 
-     * hacia el metodo 'update' del MongoRepository
-     * @param clone 
+     * Metodo para borrar un producto por Id
+     * @param id
      */
-    public void update(Clone clone) {
-        cloneCrudRepository.save(clone);
+    public void deleteById (Integer id){
+        cloneCrudRepository.deleteById(id);
     }
     /**
-     * Metodo para eliminar y retornar un registro de documento de producto
-     * hacia el metodo 'delete' del MongoRepository
-     * @param clone 
+     * Meetodo para listar productos por precio maximo
+     * @param price
+     * @return
      */
-    public void delete(Clone clone) {
-        cloneCrudRepository.delete(clone);
+    public List<Clone> findByPrice (Double price){
+        return cloneCrudRepository.findCloneByPriceIsLessThanEqual(price);
     }
     /**
-     * Metodo para obtener y retornar un registro de documento de producto
-     * cuyo valor de atributo 'id' sea el mayor, devuelto hacia el metodo 
-     * 'findTopByOrderByIdDesc' del CloneCrudRepository
-     * @return 
+     * Metodo para listar productos por descripcion
+     * @param description
+     * @return
      */
-    public Optional<Clone> getCloneWithLastId(){
-        return cloneCrudRepository.findTopByOrderByIdDesc();
+    public List<Clone> findByDesc (String description){
+        return cloneCrudRepository.findCloneByDescriptionRegex(description);
     }
 }

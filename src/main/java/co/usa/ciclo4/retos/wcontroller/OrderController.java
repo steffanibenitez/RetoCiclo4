@@ -2,6 +2,7 @@ package co.usa.ciclo4.retos.wcontroller;
 /**
  * Importaciones
  */
+import co.usa.ciclo4.retos.dmodel.Clone;
 import co.usa.ciclo4.retos.dmodel.Order;
 import co.usa.ciclo4.retos.service.OrderService;
 import java.util.List;
@@ -25,79 +26,152 @@ public class OrderController {
      */  
     @Autowired
     private OrderService orderService;
-    /**
-     * Metodo para obtener y retornar una lista de todos los registros de
-     * de documentos de productos hacia el metodo 'getAll' del OrderService
-     * @return 
+ /**
+     * Metodo COnstructor para Ordenes
+     * @param orderService
      */
-    @GetMapping("/all")
+    public OrderController(OrderService orderService) {
+        this.orderService = orderService;
+    }
+
+    /**
+     * Método para obtener todas las ordenes de la bd
+     * @return
+     */
+    @GetMapping("all")
     public List<Order> getOrders() {
         return orderService.getAll();
-    }    
+    }
+
     /**
-     * Metodo para obtener y retornar un registro de documento de producto 
-     * por el valor de su atributo 'id', hacia el metodo 'getUserById' 
-     * del OrderService
+     * Obtiene una orden por id
      * @param id
-     * @return 
+     * @return
      */
-    @GetMapping("/{id}")
-    public Optional<Order> getOrder(@PathVariable("id") Integer id) {
+    @GetMapping("{id}")
+    public Optional<Order> getOrderById(@PathVariable("id") int id){
         return orderService.getOrderById(id);
     }
+
     /**
-     * Metodo para guardar y retornar un registro de documento de producto 
-     * hacia el metodo 'save' del OrderService
+     * Método para guardar una orden en bd
      * @param order
-     * @return 
+     * @return
      */
-    @PostMapping("/new")
+    @PostMapping("new")
     @ResponseStatus(HttpStatus.CREATED)
-    public Order save(@RequestBody Order order) {
+    public Order save(@RequestBody Order order){
         return orderService.save(order);
     }
+
     /**
-     * Metodo para actualizar y retornar un registro de documento de producto 
-     * hacia el metodo 'update' del OrderService
-     * @param order
-     * @return 
-     */
-    @PutMapping("/update")
-    @ResponseStatus(HttpStatus.CREATED)
-    public Order update(@RequestBody Order order) {
-        return orderService.update(order);
-    }
-    /**
-     * Metodo para eliminar y retornar un registro de documento de cuenta de 
-     * usuario hacia el metodo 'delete' del OrderService
-     * @param id
-     * @return 
-     */
-    @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public boolean delete(@PathVariable("id") Integer id) {
-        return orderService.delete(id);
-    }
-    /**
-     * Metodo para obtener y retornar una lista de todos los registros de
-     * documentos de ordenes, por el valor del atributo 'zone' 
-     * hacia el metodo 'getOrderByZone' del OrderService
+     * Trae la zona de una orden
      * @param zone
-     * @return 
+     * @return
      */
-    @GetMapping("/zona/{zone}")
-    public List<Order> getOrdersByZone(@PathVariable("zone") String zone){
+    @GetMapping("/zone/{zone}")
+    public List<Order> getOrderByzone(@PathVariable("zone") String zone){
         return orderService.getOrderByZone(zone);
     }
+
     /**
-     * Metodo para obtener y retornar una lista de todos los registros de
-     * documentos de ordenes, por el valor del atributo 'zone' 
-     * hacia el metodo 'getOrderByZone' del OrderService
+     *
      * @param status
-     * @return 
+     * @return
      */
-    @GetMapping("/status/{status}")
-    public List<Order> getOrdersByStatus(@PathVariable("status") String status){
+    @GetMapping("/state/{estado}")
+    public List<Order> getOrderBystatus(@PathVariable("estado") String status){
         return orderService.getOrderByStatus(status);
     }
+
+    /**
+     * Actualiza a un usuario en la base de datos
+     * @param order
+     * @return
+     */
+    @PutMapping("update")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Order orderUpdate(@RequestBody Order order){
+        return orderService.orderUpdate(order);
+    }
+
+    /**
+     * Eliminar una orden por id
+     * @param orderId
+     */
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteById(@PathVariable("id")int orderId){
+        orderService.deleteById(orderId);
+    }
+
+    /**
+     * Obtiene usuarios por identificacion
+     * @param identification
+     * @return
+     */
+    @GetMapping("/identificacion/{identification}")
+    public List<Order> getOrderByIdentification(@PathVariable("identification") String identification) {
+        return orderService.findByIdentification(identification);
+    }
+
+    /**
+     * Metodo para agregar un producto
+     * @param idOrder
+     * @param clone
+     * @return
+     */
+    @PutMapping("/add/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Order addProduct(@PathVariable("id") Integer idOrder, @RequestBody Optional<Clone> clone) {
+        return orderService.addProduct(clone, idOrder);
+    }
+
+    /**
+     * Metodo para agregar cantidad
+     *
+     * @param idOrder
+     * @param cantidad
+     * @return
+     */
+    @PutMapping("/cantidad/{id}/{cantidad}/{idQuantity}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Order addCantidad(@PathVariable("id") Integer idOrder, @PathVariable("cantidad") Integer cantidad, @PathVariable("idQuantity") String idQuantity) {
+        return orderService.addCantidad(cantidad, idOrder, idQuantity);
+    }
+
+    /**
+     * Metodo para buscar el id y el estado de un Asesor
+     *
+     * @param status
+     * @param id
+     * @return
+     */
+    @GetMapping("/state/{status}/{id}")
+    public List<Order> getByStatusId(@PathVariable("status") String status, @PathVariable("id") Integer id) {
+        return orderService.orderBySalesManStatusAndId(status, id);
+    }
+
+    /**
+     * Mmetodo para buscar id y fecha del Asesor
+     *
+     * @param date
+     * @param id
+     * @return
+     */
+    @GetMapping("/date/{date}/{id}")
+    public List<Order> getByDateId(@PathVariable("date") String date, @PathVariable("id") Integer id) {
+        return orderService.getByRegisterDayAndSalesManId(date, id);
+    }
+
+    /**
+     * Metodo para buscar una order por id de asesor
+     * @param id
+     * @return
+     */
+    @GetMapping("/salesman/{id}")
+    public List<Order> getsalesmanById(@PathVariable("id") Integer id){
+        return orderService.orderById(id);
+    }
+
 }

@@ -3,10 +3,11 @@ package co.usa.ciclo4.retos.wcontroller;
  * Importaciones
  */
 import co.usa.ciclo4.retos.dmodel.Clone;
+import co.usa.ciclo4.retos.dmodel.Order;
 import co.usa.ciclo4.retos.service.CloneService;
 import java.util.List;
 import java.util.Optional;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 /**
@@ -26,56 +27,72 @@ public class CloneController {
     @Autowired
     private CloneService cloneService;
     /**
-     * Metodo para obtener y retornar una lista de todos los registros de
-     * de documentos de productos hacia el metodo 'getAll' del CloneService
-     * @return 
+     * Metodo constructor para clone
+     * @param cloneService
      */
-    @GetMapping("/all")
-    public List<Clone> getClones() {
+    public CloneController(CloneService cloneService) {
+        this.cloneService = cloneService;
+    }
+    /**
+     * Metodo para obtener para obtener todos los productos
+     * @param id
+     * @return
+     */
+    @GetMapping("{id}")
+    public Optional<Order> getOrderById(@PathVariable("id") int id){
+        return cloneService.getCloneById(id);
+    }
+    @GetMapping("all")
+    public List<Clone> getClones(){
         return cloneService.getAll();
     }
     /**
-     * Metodo para obtener y retornar un registro de documento de producto 
-     * por el valor de su atributo 'id', hacia el metodo 'getUserById' 
-     * del CloneService
-     * @param id
-     * @return 
-     */
-    @GetMapping("/{id}")
-    public Optional<Clone> getClone(@PathVariable("id") Integer id) {
-        return cloneService.getCloneById(id);
-    }
-    /**
-     * Metodo para guardar y retornar un registro de documento de producto 
-     * hacia el metodo 'save' del CloneService
+     * Metodo para guardar todos los productos
      * @param clone
-     * @return 
+     * @return
      */
-    @PostMapping("/new")
+    @PostMapping("new")
     @ResponseStatus(HttpStatus.CREATED)
-    public Clone save(@RequestBody Clone clone) {
+    public Clone save(@RequestBody Clone clone){
         return cloneService.save(clone);
     }
     /**
-     * Metodo para actualizar y retornar un registro de documento de producto 
-     * hacia el metodo 'update' del CloneService
+     * Metodo para actualizar un producto
      * @param clone
-     * @return 
+     * @return
      */
-    @PutMapping("/update")
+    @PutMapping("update")
     @ResponseStatus(HttpStatus.CREATED)
-    public Clone update(@RequestBody Clone clone) {
-        return cloneService.update(clone);
+    public Clone cloneUpdate(@RequestBody Clone clone){
+        return cloneService.save(clone);
     }
     /**
-     * Metodo para eliminar y retornar un registro de documento de cuenta de 
-     * usuario hacia el metodo 'delete' del UserService
-     * @param id
-     * @return 
+     * metodo para eliminar un producto
+     * @param cloneId
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public boolean delete(@PathVariable("id") Integer id) {
-        return cloneService.delete(id);
+    public void delete(@PathVariable("id")int cloneId){
+        cloneService.delete(cloneId);
+    }
+    /**
+     * Listar clones por un String enviado, si se encuentra en su descripción
+     *
+     * @param description
+     * @return
+     */
+    @GetMapping("description/{desc}")
+    public List<Clone> cloneByDesc(@PathVariable("desc") String description) {
+        return cloneService.cloneByDesc(description);
+    }
+    /**
+     * Listar clones que tengan un precio menor o igual al ingresado
+     *
+     * @param price
+     * @return
+     */
+    @GetMapping("price/{price}")
+    public List<Clone> cloneByPrice(@PathVariable("price") Double price) {
+        return cloneService.cloneByPrice(price);
     }
 }

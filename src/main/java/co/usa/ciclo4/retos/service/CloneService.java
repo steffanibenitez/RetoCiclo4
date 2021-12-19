@@ -16,117 +16,104 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CloneService {
-    /**
-     * Atributo objeto 'cloneRepository' instancia de la clase
-     * 'CloneRepository'
-     */
-    @Autowired
+@Autowired
     private CloneRepository cloneRepository;
+
     /**
-     * Metodo para obtener y retornar una lista de todos los registros 
-     * de documentos de productos hacia el metodo 'getAll' del 
-     * CloneRepository
-     * @return
+     * Metodo constructor de Clone
+     * @param cloneRepository
      */
-    public List<Clone> getAll() {
-        return cloneRepository.getAll();
+    public CloneService(CloneRepository cloneRepository) {
+        this.cloneRepository = cloneRepository;
     }
+
     /**
-     * Metodo para obtener y retornar un registro de documento de producto 
-     * por el valor de su atributo 'id', hacia el metodo 'getCloneById' del
-     * CloneRepository
+     * Trae un producto por id
      * @param id
      * @return
      */
-    public Optional<Clone> getCloneById(Integer id) {
+    public Optional getCloneById(int id){
         return cloneRepository.getCloneById(id);
     }
+
     /**
-     * Metodo para guardar y retornar una registro de documento de producto 
-     * hacia el metodo 'save' del CloneRepository
+     * Metodo para traer la lista de productos en la clase Clone
+     * @return cloneRepository.getAll()
+    */
+    public List<Clone> getAll(){
+        return cloneRepository.getAll();
+    }
+
+    /**
+     * Metodo para guardar un producto
      * @param clone
      * @return
-     */
-    public Clone save(Clone clone) {
-        Optional<Clone> cloneWithLastId = cloneRepository.getCloneWithLastId();
-        if(clone.getId() == null) {
-            if(cloneWithLastId.isEmpty())
-                clone.setId(1);
-            else
-                clone.setId(cloneWithLastId.get().getId() + 1);
-        }
-        if (clone.getBrand() == null || clone.getProcesor() == null || clone.getOs() == null
-                || clone.getDescription() == null || clone.getMemory() == null 
-                || clone.getHardDrive() == null) {
-            return clone;
-        } else {
-            if (clone.getId() == null) {
-                return clone;
-            } else {
-                return cloneRepository.save(clone);
-            }
-        }
-    }
-    /**
-     * Metodo para actualizar y retornar un registro de documento de producto 
-     * hacia el metodo 'update' del CloneRepository
-     * @param clone
-     * @return
-     */
-    public Clone update(Clone clone) {
-        if (clone.getId() != null) {
-            Optional<Clone> cloneOptional = cloneRepository.getCloneById(clone.getId());
-            if (!cloneOptional.isEmpty()) {
-                if (clone.getBrand() != null) {
-                    cloneOptional.get().setBrand(clone.getBrand());
-                }
-                if (clone.getProcesor() != null) {
-                    cloneOptional.get().setProcesor(clone.getProcesor());
-                }
-                if (clone.getOs() != null) {
-                    cloneOptional.get().setOs(clone.getOs());
-                }
-                if (clone.getDescription() != null) {
-                    cloneOptional.get().setDescription(clone.getDescription());
-                }
-                if (clone.getMemory() != null) {
-                    cloneOptional.get().setMemory(clone.getMemory());
-                }
-                if (clone.getHardDrive() != null) {
-                    cloneOptional.get().setHardDrive(clone.getHardDrive());
-                }
-                if (clone.getPrice() != 0.0) {
-                    cloneOptional.get().setPrice(clone.getPrice());
-                }
-                if (clone.getQuantity() != 0) {
-                    cloneOptional.get().setQuantity(clone.getQuantity());
-                } 
-                if (clone.getPhotography() != null) {
-                    cloneOptional.get().setPhotography(clone.getPhotography());
-                }
-                cloneOptional.get().setAvailability(clone.isAvailability());
-                cloneRepository.update(cloneOptional.get());
-                return cloneOptional.get();
-            } else {
-                return clone;
-            }
-        } else {
+    */
+    public Clone save(Clone clone){
+
+        List<Clone> clones = cloneRepository.getAll();
+        Integer idAuto = clones.size();
+        idAuto++;
+        Optional<Clone> exist = cloneRepository.getCloneById(idAuto);
+        if (exist.isPresent()){
             return clone;
         }
+        if (clone.getId() == null){
+            clone.setId(idAuto);
+        }
+
+        if (clones.size() == 0){
+            return cloneRepository.save(clone);
+        }else if (clones.isEmpty() == false) {
+            return cloneRepository.save(clone);
+        }
+        return clone;
     }
+
     /**
-     * Metodo para eliminar y retornar un registro de documento de producto 
-     * hacia el metodo 'delete' del CloneRepository
+     * Metodo para obtener un producto por Id
      * @param id
      * @return
      */
-    public boolean delete(Integer id) {
-        Optional<Clone> cloneOptional = cloneRepository.getCloneById(id);
-        if (cloneOptional.isPresent()) {
-            cloneRepository.delete(cloneOptional.get());
-            return true;
-        } else {
-            return false;
+    public boolean getById(String id){
+
+        List<Clone> clones = cloneRepository.getAll();
+        boolean flag = false;
+
+        for (Clone clone: clones) {
+            if(id.equals(clone.getId())){
+                flag = true;
+            }
         }
+        return flag;
     }
+
+    /**
+     * Metodo para eliminar un producto
+     * @param id
+     */
+    public void delete(int id){
+        cloneRepository.deleteById(id);
+    }
+
+
+    /**
+     * Metodo para listar Productos por descripcion
+     * @param description
+     * @return
+     */
+    public List<Clone> cloneByDesc(String description) {
+        return cloneRepository.findByDesc("(?i)" + description );
+    }
+
+    /**
+     * Listar Clones que tengan un precio menor o igual al ingresado
+     *
+     * @param price
+     * @return
+     */
+    public List<Clone> cloneByPrice(Double price) {
+        return cloneRepository.findByPrice(price);
+    }
+
 }

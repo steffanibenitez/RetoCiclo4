@@ -4,7 +4,6 @@ package co.usa.ciclo4.retos.icrudrepository;
  */
 import co.usa.ciclo4.retos.dmodel.Order;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 /**
@@ -16,27 +15,49 @@ import org.springframework.data.mongodb.repository.Query;
  * MongoRepository
  */
 public interface OrderCrudRepository extends MongoRepository<Order, Integer> {
+ 
     /**
-     * Metodo Query para encontrar y retornar los registros de documento de 
-     * orden por el valor de su atributo 'zone', establecido como parámetro. 
-     * Se pasa el valor del atributo 'salesMan.zone' en la posición '0'
+     * Metodo para listar ordenes por identificacoin de usuarios
+     * @param identification
+     * @return
+     */
+    @Query("{'salesMan.identification': ?0}")
+    List<Order> findByIdentification(final String identification);
+    /**
+     * Metodo para listar ordenes por zona
      * @param zone
-     * @return 
+     * @return
      */
     @Query("{'salesMan.zone':?0}")
-    public List<Order> findByZone(String zone);
+    List<Order> findByZone(String zone);
     /**
-     * Metodo Query para encontrar los registros de documento de orden por el 
-     * valor de su atributo 'status', establecido como parámetro.
+     * Metodo para listar ordenes por estado
      * @param status
-     * @return 
+     * @return
      */
-    @Query("{'status':?0}")
-    public List<Order> findByStatus(String status);
+    @Query("{'salesMan.status':?0}")
+    List<Order> findByStatus(String status);
     /**
-     * Metodo Query para seleccionar el registro de documento de la orden, 
-     * con el valor mayor en el atributo 'id'
-     * @return 
+     * Método para obtener la lista de órdenes por Id de asesor
+     *
+     * @param id
+     * @return
      */
-    public Optional<Order> findTopByOrderByIdDesc();    
+    List<Order> findBySalesManId(Integer id);
+    /**
+     * Método para obtener las órdenes con un estado específico de un asesor por ID
+     *
+     * @param id
+     * @param status
+     * @return
+     */
+    List<Order> findBySalesManIdAndStatus(Integer id, String status);
+    /**
+     * Método para Obtener las órdenes por fecha de un Asesor por ID
+     *
+     * @param registerDay
+     * @param id
+     * @return
+     */
+    List<Order> findByRegisterDayContainsAndSalesManId(String registerDay, Integer id);
 }

@@ -2,10 +2,11 @@ package co.usa.ciclo4.retos.dmodel;
 /**
  * Importaciones
  */
-import java.util.Date;
+
 import java.util.Map;
 //import javax.persistence.Id;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
@@ -19,6 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Document(collection = "orders")
 public class Order {
     /**
@@ -41,7 +43,7 @@ public class Order {
     /**
      * Atributo 'registerDay' del Documento
      */
-    private Date registerDay;
+    private String registerDay;
     /**
      * Atributo 'status' del Documento
      */
@@ -53,7 +55,7 @@ public class Order {
     /**
      * Atributo 'products' del Documento
      */
-    private Map<String, Clone> products;
+    private Map<Integer, Clone> products;
     /**
      * Atributo 'qualities' del Documento
      */

@@ -6,6 +6,7 @@ import co.usa.ciclo4.retos.dmodel.User;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.mongodb.repository.Query;
 /**
  *
  * @author IngSB
@@ -17,39 +18,17 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  */
 public interface UserCrudRepository extends MongoRepository<User, Integer> {
     /**
-     * Metodo Query para encontrar registro de cuenta de usuario por el valor 
-     * de su atributo 'name'
-     * @param name
-     * @return 
-     */
-    public Optional<User> findByName(String name);
-    /**
-     * Metodo Query para encontrar registro de cuenta de usuario por el valor
-     * de su atributo 'email'
-     * @param email
-     * @return 
-     */
-    public Optional<User> findByEmail(String email);
-    /**
-     * Metodo Query para encontrar registro de cuenta de usuario por el valor
-     * de su atributo 'name' o por su atributo 'email'
-     * @param name
-     * @param email
-     * @return 
-     */
-    public List<User> findByNameOrEmail(String name, String email);
-    /**
-     * Metodo Query para encontrar registro de cuenta de usuario por los valores
-     * de sus atributos 'email' y 'password'
-     * @param email
-     * @param password
+     * Metodo para listar usuarios por Identificacion
+     * @param identification
      * @return
      */
-    public Optional<User> findByEmailAndPassword(String email, String password);
+    @Query("{'identification': ?0}")
+    Optional<User> findByIdentificacion(final String identification);
     /**
-     * Metodo Query para seleccionar el registro de documento de cuenta de
-     * usuario, con el valor mayor en el atributo 'id'
-     * @return 
+     * Método para listar usuarios cuyo mes de cumpleaños sea el ingresado
+     *
+     * @param month
+     * @return
      */
-    public Optional<User> findTopByOrderByIdDesc();
+    List<User> findByMonthBirthtDay(String month);
 }

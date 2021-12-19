@@ -19,91 +19,101 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/user")
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class UserController {    
-    /**
-     * Atributo objeto 'userService' instancia de la clase
-     * 'UserService'
-     */    
+ /**
+     * atributo autowired para usuario
+     */
     @Autowired
     private UserService userService;
+
     /**
-     * Metodo para obtener y retornar una lista de todos los registros de
-     * documentos de cuentas de usuario hacia el metodo 'getAll' del UserService
-     * @return 
+     * Método para obtener a todos los usuarios de la base de datos
+     * @return getAll retorna a todos los usuarios
      */
-    @GetMapping("/all")
+    @GetMapping("all")
     public List<User> getUsers() {
         return userService.getAll();
     }
+
     /**
-     * Metodo para obtener y retornar un registro de documento de cuenta de 
-     * usuario por el valor de su atributo 'id', hacia el metodo 'getUserById' 
-     * del UserService
-     * @param id
-     * @return 
+     * Obtiene al usuario por id
+     * @param idUser
+     * @return
      */
-    @GetMapping("/{id}")
-    public Optional<User> getUser(@PathVariable("id") Integer id) {
-        return userService.getUserById(id);
+    @GetMapping("{id}")
+    public Optional<User> getUserById(@PathVariable("id") int idUser){
+        return userService.getUserById(idUser);
     }
+
     /**
-     * Metodo para guardar y retornar un registro de documento de cuenta de 
-     * usuario hacia el metodo 'save' del UserService
+     * Método para guardar un usuario en base de datos
      * @param user
-     * @return 
+     * @return user Retorna al usuario actualizado
      */
-    @PostMapping("/new")
+    @PostMapping("new")
     @ResponseStatus(HttpStatus.CREATED)
-    public User save(@RequestBody User user) {
+    public User save(@RequestBody User user){
         return userService.save(user);
     }
+
     /**
-     * Metodo para actualizar y retornar un registro de documento de cuenta 
-     * de usuario hacia el metodo 'update' del UserService
+     * Obtiene al usuario por su correo.
+     * @param email
+     * @return Boolean Retorna un valor booleano, si existe o no el correo.
+     */
+    @GetMapping("emailexist/{email}")
+    public boolean getEmail(@PathVariable("email") String email){
+        return userService.getByEmail(email);
+    }
+
+    /**
+     * Obtiene una respuesta con su email y pass, de si existe en la base de datos
+     * @param email
+     * @param pass
+     * @return
+     */
+    @GetMapping("{email}/{pass}")
+    public User userEmailPass(@PathVariable("email") String email, @PathVariable("pass") String pass){
+        return userService.getByEmailPass(email, pass);
+    }
+
+    /**
+     * Actualiza a un usuario en la base de datos
      * @param user
-     * @return 
+     * @return
      */
-    @PutMapping("/update")
+    @PutMapping("update")
     @ResponseStatus(HttpStatus.CREATED)
-    public User update(@RequestBody User user) {
-        return userService.update(user);
+    public User userUpdate(@RequestBody User user){
+        return userService.userUpdate(user);
     }
+
     /**
-     * Metodo para eliminar y retornar un registro de documento de cuenta de 
-     * usuario hacia el metodo 'delete' del UserService
-     * @param id
-     * @return 
+     * Eliminar un usuario de la base de datos por Id
+     * @param userId
      */
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public boolean delete(@PathVariable("id") Integer id) {
-        return userService.delete(id);
-    }    
+    public void delete(@PathVariable("id")int userId){
+        userService.delete(userId);
+    }
+
     /**
-     * Metodo para obtener y retornar un registro de cuenta de usuario por
-     * el valor de su atributo 'email', hacia el metodo 'getUserByEmail' del 
-     * UserService
-     * @param email
-     * @return 
-     *//*
-    @GetMapping("/emailexist/{email}")
-    public boolean emailExist(@PathVariable("email") String email) {
-        return userService.getUserByEmail(email);
-    }*/
-    @GetMapping("/emailexist/{email}")
-    public boolean emailExist(@PathVariable("email") String email) {
-        return userService.getUserByEmail(email);
+     * Obtiene usuarios por identificacion
+     * @param identificacion
+     * @return
+     */
+    @GetMapping("identificacion/{identificacion}")
+    public Optional<User> getByIdentificacion(@PathVariable("identificacion") String identificacion) {
+        return userService.getbyidentificacion(identificacion);
     }
     /**
-     * Metodo para obtener y retornar un registro de cuenta de usuario por
-     * el valor de sus atributos 'email' y 'password', hacia el metodo 
-     * 'getUserByEmailAndPassword' del UserService
-     * @param email
-     * @param password
-     * @return 
+     * Método para listar usuarios cuyo mes de cumpleaños sea el ingresado
+     *
+     * @param month
+     * @return
      */
-    @GetMapping("/{email}/{password}")
-    public User authenticateUser(@PathVariable("email") String email, 
-            @PathVariable("password") String password) {
-        return userService.getUserEmailAndPassword(email, password);
+    @GetMapping("birthday/{month}")
+    public List<User> userByMonth(@PathVariable("month") String month) {
+        return userService.userByMonth(month);
     }
 }

@@ -16,129 +16,64 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class UserRepository {
+ 
     /**
-     * Atributo objeto 'userCrudRepository' instancia de la interface
-     * 'UserCrudRepository'
+     * atributo para user
      */
     @Autowired
     private UserCrudRepository userCrudRepository;
+
     /**
-     * Metodo para obtener y retornar una lista de todos los registros de
-     * documentos de cuentas de usuario hacia el metodo 'findAll' del 
-     * MongoRepository
+     * Metodo para obtener cada usuario por Id
+     * @param idUser
      * @return
      */
-    public List<User> getAll() {
+    public Optional<User> getUserById(int idUser){
+        return userCrudRepository.findById(idUser);
+    }
+
+    /**
+     * Método para obtener a todos los usuarios
+     * @return
+     */
+    public List<User> getAll(){
         return (List<User>) userCrudRepository.findAll();
     }
+
     /**
-     * Metodo para obtener y retornar un registro de documento de cuenta de 
-     * usuario por el valor de su atributo 'id', hacia el metodo 'findById' del 
-     * MongoRepository
-     * @param id
-     * @return 
-     */
-    public Optional<User> getUserById(Integer id) {
-        return userCrudRepository.findById(id);
-    }
-    /**
-     * Metodo para guardar y retornar un registro de documento de cuenta de 
-     * usuario hacia el metodo 'save' del MongoRepository
+     * Método para guardar un usuario
      * @param user
-     * @return 
+     * @return userCrudRepository.save(user)
      */
-    public User save(User user) {
+    public User save(User user){
         return userCrudRepository.save(user);
     }
+
     /**
-     * Metodo para actualizar y retornar un registro de documento de cuenta 
-     * de usuario hacia el metodo 'update' del MongoRepository
-     * @param user 
+     * Metodo para borrar un usuario por Id
+     * @param idUser
      */
-     public void update(User user) {
-        userCrudRepository.save(user);
+    public void deleteById (Integer idUser){
+        userCrudRepository.deleteById(idUser);
     }
+
+
     /**
-     * Metodo para eliminar y retornar un registro de documento de cuenta de 
-     * usuario hacia el metodo 'delete' del MongoRepository
-     * @param user 
+     * Metodo para buscar por identificacion de usuario
+     * @param identificacion
+     * @return
      */
-    public void delete(User user) {
-        userCrudRepository.delete(user);
+    public Optional<User> findByIdentificacion(String identificacion){
+        return userCrudRepository.findByIdentificacion(identificacion);
     }
+
     /**
-     * Metodo para validar y retornar un valor booleano que indica si un
-     * registro de documento de cuenta de usuario existe, buscandolo a partir 
-     * del atributo 'email' del registro, hacia el metodo query 'findByEmail' 
-     * del MongoRepository
-     * @param email
-     * @return 
+     * Metodo para listar usuarios por mes
+     * @param month
+     * @return
      */
-    public boolean emailExists(String email) {
-        Optional<User> userOptional = userCrudRepository.findByEmail(email);
-        return !userOptional.isEmpty();
+    public List<User> findByMonth (String month){
+        return userCrudRepository.findByMonthBirthtDay(month);
     }
-    /**
-     * Metodo para obtener y retornar un registro de documento de cuenta de 
-     * usuario, buscandolo a partir de los atributos 'email' y 'password' del 
-     * registro, hacia el metodo query 'findByEmailAndPassword' del 
-     * MongoRepository
-     * @param email
-     * @param password
-     * @return 
-     */
-    public Optional<User> authenticateUser(String email, String password) {
-        return userCrudRepository.findByEmailAndPassword(email, password);
-    }  
-    /**
-     * Metodo para obtener y retornar un registro de documento de cuenta de 
-     * usuario por el valor de su atributo 'name', hacia el metodo 'findByName' 
-     * del MongoRepository
-     * @param name
-     * @return 
-     */
-    public Optional<User> getUserByName(String name) {
-        return userCrudRepository.findByName(name);
-    }
-    /**
-     * Metodo para obtener y retornar un registro de documento de cuenta de 
-     * usuario por el valor de su atributo 'email', hacia el metodo 'findByEmail' 
-     * del MongoRepository
-     * @param email
-     * @return 
-     */
-    public Optional<User> getUserByEmail(String email) {
-        return userCrudRepository.findByEmail(email);
-    }
-    /**
-     * Metodo para obtener y retornar un registro de documento de cuenta de 
-     * usuario por el valor de su atributo 'name' o de su atributo 'email', 
-     * hacia el metodo 'findByNameOrEmail' del MongoRepository
-     * @param name
-     * @param email
-     * @return 
-     */
-    public List<User> getUsersByNameOrEmail(String name, String email) {
-        return userCrudRepository.findByNameOrEmail(name, email);
-    }
-    /**
-     * Metodo para obtener y retornar un registro de documento de cuenta de 
-     * usuario por los valores de sus atributos 'email' y 'password', 
-     * hacia el metodo 'findByName' del MongoRepository
-     * @param email
-     * @param password
-     * @return 
-    */
-    public Optional<User> getUserEmailAndPassword(String email, String password) {
-        return userCrudRepository.findByEmailAndPassword(email, password);
-    }
-    /**
-     * Metodo para obtener y retornar un registro de documento de producto
-     * cuyo valor de atributo 'id' sea el mayor, devuelto hacia el metodo 
-     * 'findTopByOrderByIdDesc' del CloneCrudRepository
-     * @return 
-     */
-    public Optional<User> getUserWithLastId(){
-        return userCrudRepository.findTopByOrderByIdDesc();
-    }
+
 }
